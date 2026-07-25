@@ -38,8 +38,8 @@ test = [
 colcon_ws = "pytest_colcon_ws.plugin"
 
 [project.urls]
-Homepage = "https://github.com/ament-nodl/pytest-colcon-ws"
-Issues = "https://github.com/ament-nodl/pytest-colcon-ws/issues"
+Homepage = "https://github.com/alistair-english/pytest-colcon-ws"
+Issues = "https://github.com/alistair-english/pytest-colcon-ws/issues"
 
 [tool.setuptools.packages.find]
 include = ["pytest_colcon_ws*"]
