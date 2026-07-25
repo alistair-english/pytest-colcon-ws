@@ -20,21 +20,26 @@ tests/test_ws/
 ├── COLCON_IGNORE          # prevents outer colcon workspaces from building this
 ├── .gitignore             # build/ install/ log/
 └── src/
-    └── tiny_pkg/
+    ├── tiny_pkg/
+    │   ├── CMakeLists.txt
+    │   └── package.xml
+    └── tiny_pkg_b/
         ├── CMakeLists.txt
         └── package.xml
 ```
 
-`tiny_pkg` does nothing except register a single ament resource index
-entry:
+Both packages are trivial — no code, no executables, no launch files.
+Each one registers a single ament resource index entry:
 
-```cmake
-ament_index_register_resource(test_resource CONTENT "hello")
-```
+| Package | Resource content |
+|---|---|
+| `tiny_pkg` | `"hello"` |
+| `tiny_pkg_b` | `"world"` |
 
-This is the smallest thing colcon can build that gives us something
-observable to assert on.  The package has no code, no executables, no
-launch files.
+`tiny_pkg_b` declares a `<depend>tiny_pkg</depend>`, so colcon must
+build them in dependency order.  This exercises multi-package workspace
+handling and colcon's dependency resolution without adding any real
+complexity to the test workspace.
 
 ## Test structure
 
@@ -69,6 +74,7 @@ build-and-source cycle runs once per session.
 | `test_env_is_clean` | A sentinel variable set in the outer environment does **not** appear in the captured env.  Proves the clean-shell approach works. |
 | `test_env_has_ros_distro` | `ROS_DISTRO` is set in the captured env (sanity check that the base ROS install was sourced). |
 | `test_read_resource` | `read_resource(env, 'test_resource', 'tiny_pkg')` returns `"hello"`. Exercises the full path from colcon build → ament index → helper function. |
+| `test_read_resource_second_package` | `read_resource(env, 'test_resource', 'tiny_pkg_b')` returns `"world"`. Proves multi-package workspaces with inter-package dependencies work. |
 | `test_read_resource_missing_package` | `read_resource(env, 'test_resource', 'nonexistent')` raises `FileNotFoundError`. |
 | `test_read_resource_missing_ament_prefix` | `read_resource({}, ...)` raises `KeyError`. |
 
@@ -151,8 +157,5 @@ logic — if it passes locally with `./ci/test.sh`, it passes in CI.
   ROS workspaces in practice.
 - **Internal functions in isolation.**  No unit tests for `_parse_env`,
   `_build_workspace`, etc.  If the e2e tests pass, the internals work.
-- **Multiple packages in the test workspace.**  `tiny_pkg` alone is
-  sufficient to exercise the full lifecycle.  Consumer repos test their
-  own multi-package workspaces.
 - **Colcon's build caching behaviour.**  We trust colcon.  We don't
   assert that a second build is faster.

@@ -1,3 +1,4 @@
 build/
 install/
 log/
+.test_ws_setup_ran

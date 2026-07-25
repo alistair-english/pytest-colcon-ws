@@ -38,6 +38,7 @@ run_pixi() {
             # invalid inside this container.
             rm -rf .pixi .pytest_cache .venv pytest_colcon_ws.egg-info
             rm -rf tests/test_ws/build tests/test_ws/install tests/test_ws/log
+            rm -f tests/test_ws/.test_ws_setup_ran
 
             # Install pixi
             apt-get update -qq && apt-get install -y -qq curl ca-certificates > /dev/null 2>&1
@@ -61,6 +62,7 @@ run_container() {
             # Drop developer-local artifacts copied from the mounted checkout.
             rm -rf .pixi .pytest_cache .venv pytest_colcon_ws.egg-info
             rm -rf tests/test_ws/build tests/test_ws/install tests/test_ws/log
+            rm -f tests/test_ws/.test_ws_setup_ran
 
             # ros:* images have python3 but not always pip/venv.  Install
             # into a virtualenv to avoid PEP 668 externally-managed-system

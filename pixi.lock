@@ -4710,10 +4710,10 @@ packages:
 - pypi: ./
   name: pytest-colcon-ws
   version: 0.1.0
-  sha256: affae99c8a487e8519ca6be71d7a08cd5f8b55bb8b9bb3c09b38e7016aedd50f
+  sha256: be1821568bbe10abdb8e56da17e5fba782e8a3120dbb014910c1cfbb48487598
   requires_dist:
-  - pytest>=8,<9
-  - pytest>=8,<9 ; extra == 'test'
+  - pytest>=8
+  - pytest>=8 ; extra == 'test'
   requires_python: '>=3.10'
 - conda: https://prefix.dev/conda-forge/noarch/pytest-cov-7.1.0-pyhcf101f3_0.conda
   sha256: 44e42919397bd00bfaa47358a6ca93d4c21493a8c18600176212ec21a8d25ca5
