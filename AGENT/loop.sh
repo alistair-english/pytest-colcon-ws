@@ -25,7 +25,7 @@ while true; do
   fi
 
   echo "=== Starting pi run at $(date) ==="
-  pi --mode json "$PROMPT" 2>/dev/null | jq --unbuffered -rj '
+  pi --model openai-codex/gpt-5.5 --thinking high --mode json "$PROMPT" 2>/dev/null | jq --unbuffered -rj '
     if .type == "message_update" then
       .assistantMessageEvent |
       if .type == "text_delta" then .delta
