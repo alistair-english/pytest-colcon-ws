@@ -4,12 +4,12 @@ __version__ = "0.1.0"
 
 try:
     from .ament import read_resource
-except ModuleNotFoundError as exc:  # pragma: no cover - temporary phase-1 stub
-    if exc.name != f"{__name__}.ament":
+except (ImportError, ModuleNotFoundError) as exc:  # pragma: no cover - temporary stub
+    if isinstance(exc, ModuleNotFoundError) and exc.name != f"{__name__}.ament":
         raise
 
     def read_resource(*args, **kwargs):
-        """Temporary stub until pytest_colcon_ws.ament is implemented."""
+        """Temporary stub until pytest_colcon_ws.ament.read_resource is implemented."""
         raise NotImplementedError("pytest_colcon_ws.ament.read_resource is not implemented yet")
 
 
