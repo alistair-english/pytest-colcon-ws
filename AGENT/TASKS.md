@@ -4,7 +4,7 @@
 - [x] Stub `pytest_colcon_ws/plugin.py` and `pytest_colcon_ws/ament.py` as empty modules so imports resolve while implementation is still absent.
 - [x] Create `tests/test_lifecycle.py` with e2e tests for `AMENT_PREFIX_PATH`, clean environment isolation, `ROS_DISTRO`, `read_resource`, missing resource, and missing `AMENT_PREFIX_PATH`.
 - [x] Create `tests/test_build_failure.py` using `pytester` to run a nested pytest session against a broken workspace and assert the CMake fatal error appears in pytest output.
-- [ ] Run the test suite and confirm the Phase 3 tests are red for the expected missing-implementation reasons, not import errors or broken test logic.
+- [x] Run the test suite and confirm the Phase 3 tests are red for the expected missing-implementation reasons, not import errors or broken test logic. Confirmed with `python3 -m pytest -q`: failures are due to missing `test_ws_env` fixture/plugin implementation and unimplemented `read_resource`, as expected for Phase 3.
 
 ## 🔶 Human Review Checkpoint
 

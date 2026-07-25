@@ -1,0 +1,5 @@
+Phase 3 has reached the 🔶 Human Review Checkpoint.
+
+The red test suite is written and has been run with `python3 -m pytest -q`. The observed failures are the expected missing-implementation failures for this phase (missing `test_ws_env` plugin fixture and unimplemented `read_resource`), not test import errors or broken test logic when run via `python3 -m pytest`.
+
+Human action needed: review the Phase 3 tests against DESIGN.md, PLAN.md, and TESTING.md. If approved, remove AGENT/STOP_LOOP and resume so Phase 4 can implement the core plugin.
