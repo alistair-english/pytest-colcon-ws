@@ -74,7 +74,21 @@ run_container() {
             pip install --upgrade pip 'setuptools>=68,<80' wheel
             pip install '.[test]'
 
-            pytest
+            # launch_testing on Humble, Jazzy, and Lyrical uses the
+            # deprecated 'path' arg in its pytest_pycollect_makemodule
+            # hook, which was removed in pytest 9.  Rolling ships
+            # launch_testing ≥3.10 which is fully compatible.
+            if [[ "${distro}" == "humble" || "${distro}" == "jazzy" || "${distro}" == "lyrical" ]]; then
+                pip install 'pytest<9'
+            fi
+
+            # Use 'python -m pytest' so that the venv's Python (which
+            # can see both venv and system-site-packages) is used.  A
+            # bare 'pytest' can resolve to the system executable when
+            # the system Python already satisfies the pytest version
+            # constraint and pip therefore skips installing a venv-local
+            # wrapper (e.g. Lyrical/Rolling ship pytest 9).
+            python -m pytest
         "
 }
 
