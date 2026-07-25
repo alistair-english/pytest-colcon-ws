@@ -43,3 +43,6 @@ Issues = "https://github.com/ament-nodl/pytest-colcon-ws/issues"
 
 [tool.setuptools.packages.find]
 include = ["pytest_colcon_ws*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

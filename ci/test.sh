@@ -62,10 +62,15 @@ run_container() {
             rm -rf .pixi .pytest_cache .venv pytest_colcon_ws.egg-info
             rm -rf tests/test_ws/build tests/test_ws/install tests/test_ws/log
 
-            # ros:* images have python3 but not always pip
-            apt-get update -qq && apt-get install -y -qq python3-pip > /dev/null 2>&1
-            pip install -e '.[test]' --break-system-packages 2>/dev/null \
-                || pip install -e '.[test]'
+            # ros:* images have python3 but not always pip/venv.  Install
+            # into a virtualenv to avoid PEP 668 externally-managed-system
+            # errors, and use a regular install so older Humble tooling does
+            # not need PEP 660 editable-install support.
+            apt-get update -qq && apt-get install -y -qq python3-pip python3-venv > /dev/null 2>&1
+            python3 -m venv --system-site-packages /tmp/pytest-colcon-ws-venv
+            source /tmp/pytest-colcon-ws-venv/bin/activate
+            pip install --upgrade pip 'setuptools>=68,<80' wheel
+            pip install '.[test]'
 
             pytest
         "
