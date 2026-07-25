@@ -29,7 +29,7 @@ def test_build_failure_output_includes_cmake_error(pytester):
     )
     (package / "CMakeLists.txt").write_text(
         """cmake_minimum_required(VERSION 3.8)
-project(broken_pkg)
+project(broken_pkg NONE)
 
 message(FATAL_ERROR "intentional build failure from pytest-colcon-ws test")
 

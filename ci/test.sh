@@ -33,6 +33,11 @@ run_pixi() {
         bash -c "
             set -euo pipefail
             cp -r /src/. .
+            # Drop developer-local artifacts copied from the mounted checkout.
+            # In particular, a host .pixi env may contain symlinks that are
+            # invalid inside this container.
+            rm -rf .pixi .pytest_cache .venv pytest_colcon_ws.egg-info
+            rm -rf tests/test_ws/build tests/test_ws/install tests/test_ws/log
 
             # Install pixi
             apt-get update -qq && apt-get install -y -qq curl ca-certificates > /dev/null 2>&1
@@ -53,6 +58,9 @@ run_container() {
         bash -c "
             set -euo pipefail
             cp -r /src/. .
+            # Drop developer-local artifacts copied from the mounted checkout.
+            rm -rf .pixi .pytest_cache .venv pytest_colcon_ws.egg-info
+            rm -rf tests/test_ws/build tests/test_ws/install tests/test_ws/log
 
             # ros:* images have python3 but not always pip
             apt-get update -qq && apt-get install -y -qq python3-pip > /dev/null 2>&1
