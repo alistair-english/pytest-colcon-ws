@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytest-colcon-ws"
+version = "0.1.0"
+description = "A pytest plugin for building and sourcing colcon test workspaces."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "pytest-colcon-ws contributors" },
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Framework :: Pytest",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "pytest>=8",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8",
+]
+
+[project.entry-points.pytest11]
+colcon_ws = "pytest_colcon_ws.plugin"
+
+[project.urls]
+Homepage = "https://github.com/ament-nodl/pytest-colcon-ws"
+Issues = "https://github.com/ament-nodl/pytest-colcon-ws/issues"
+
+[tool.setuptools.packages.find]
+include = ["pytest_colcon_ws*"]
