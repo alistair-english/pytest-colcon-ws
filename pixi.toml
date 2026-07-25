@@ -3,13 +3,13 @@ name = "pytest-colcon-ws"
 version = "0.1.0"
 description = "A pytest plugin for building and sourcing colcon test workspaces."
 authors = ["pytest-colcon-ws contributors"]
-channels = ["conda-forge"]
+channels = ["https://prefix.dev/conda-forge"]
 platforms = ["linux-64"]
 license = "Apache-2.0"
 
 [dependencies]
 python = ">=3.10"
-pytest = ">=8"
+pytest = ">=8,<9"
 setuptools = ">=68"
 wheel = "*"
 bash = "*"
@@ -29,7 +29,7 @@ lyrical = { features = ["lyrical"] }
 rolling = { features = ["rolling"] }
 
 [feature.humble]
-channels = ["robostack-humble", "conda-forge"]
+channels = ["https://prefix.dev/robostack-humble", "https://prefix.dev/conda-forge"]
 
 [feature.humble.dependencies]
 ros-humble-ros-base = "*"
@@ -40,7 +40,7 @@ ROS_DISTRO = "humble"
 ROS_SETUP_PATH = "$CONDA_PREFIX/setup.bash"
 
 [feature.jazzy]
-channels = ["robostack-jazzy", "conda-forge"]
+channels = ["https://prefix.dev/robostack-jazzy", "https://prefix.dev/conda-forge"]
 
 [feature.jazzy.dependencies]
 ros-jazzy-ros-base = "*"
@@ -51,7 +51,7 @@ ROS_DISTRO = "jazzy"
 ROS_SETUP_PATH = "$CONDA_PREFIX/setup.bash"
 
 [feature.lyrical]
-channels = ["robostack-lyrical", "conda-forge"]
+channels = ["https://prefix.dev/robostack-lyrical", "https://prefix.dev/conda-forge"]
 
 [feature.lyrical.dependencies]
 ros-lyrical-ros-base = "*"
@@ -62,7 +62,7 @@ ROS_DISTRO = "lyrical"
 ROS_SETUP_PATH = "$CONDA_PREFIX/setup.bash"
 
 [feature.rolling]
-channels = ["robostack-rolling", "conda-forge"]
+channels = ["https://prefix.dev/robostack-rolling", "https://prefix.dev/conda-forge"]
 
 [feature.rolling.dependencies]
 ros-rolling-ros-base = "*"
