@@ -1,0 +1,73 @@
+[workspace]
+name = "pytest-colcon-ws"
+version = "0.1.0"
+description = "A pytest plugin for building and sourcing colcon test workspaces."
+authors = ["pytest-colcon-ws contributors"]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+license = "Apache-2.0"
+
+[dependencies]
+python = ">=3.10"
+pytest = ">=8"
+setuptools = ">=68"
+wheel = "*"
+bash = "*"
+cmake = "*"
+colcon-common-extensions = "*"
+
+[pypi-dependencies]
+pytest-colcon-ws = { path = ".", editable = true }
+
+[tasks]
+test = "pytest"
+
+[environments]
+humble = { features = ["humble"] }
+jazzy = { features = ["jazzy"] }
+lyrical = { features = ["lyrical"] }
+rolling = { features = ["rolling"] }
+
+[feature.humble]
+channels = ["robostack-humble", "conda-forge"]
+
+[feature.humble.dependencies]
+ros-humble-ros-base = "*"
+ros-humble-ament-cmake = "*"
+
+[feature.humble.activation.env]
+ROS_DISTRO = "humble"
+ROS_SETUP_PATH = "$CONDA_PREFIX/setup.bash"
+
+[feature.jazzy]
+channels = ["robostack-jazzy", "conda-forge"]
+
+[feature.jazzy.dependencies]
+ros-jazzy-ros-base = "*"
+ros-jazzy-ament-cmake = "*"
+
+[feature.jazzy.activation.env]
+ROS_DISTRO = "jazzy"
+ROS_SETUP_PATH = "$CONDA_PREFIX/setup.bash"
+
+[feature.lyrical]
+channels = ["robostack-lyrical", "conda-forge"]
+
+[feature.lyrical.dependencies]
+ros-lyrical-ros-base = "*"
+ros-lyrical-ament-cmake = "*"
+
+[feature.lyrical.activation.env]
+ROS_DISTRO = "lyrical"
+ROS_SETUP_PATH = "$CONDA_PREFIX/setup.bash"
+
+[feature.rolling]
+channels = ["robostack-rolling", "conda-forge"]
+
+[feature.rolling.dependencies]
+ros-rolling-ros-base = "*"
+ros-rolling-ament-cmake = "*"
+
+[feature.rolling.activation.env]
+ROS_DISTRO = "rolling"
+ROS_SETUP_PATH = "$CONDA_PREFIX/setup.bash"
