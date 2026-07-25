@@ -6,4 +6,4 @@
 - [x] Ensure `read_resource` raises `KeyError` when `AMENT_PREFIX_PATH` is missing from `env`.
 - [x] Ensure `read_resource` raises `FileNotFoundError` with a descriptive message when no prefix contains the requested resource.
 - [x] Update `pytest_colcon_ws/__init__.py` to properly re-export `read_resource`.
-- [ ] Run the relevant lifecycle and build-failure tests and confirm all tests expected by Phase 5 pass.
+- [x] Run the relevant lifecycle and build-failure tests and confirm all tests expected by Phase 5 pass.
