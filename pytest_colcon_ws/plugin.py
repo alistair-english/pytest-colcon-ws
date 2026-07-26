@@ -52,19 +52,51 @@ def test_ws_setup(test_ws_path: Path) -> None:
 
 
 @pytest.fixture(scope="session")
+def test_ws_underlays() -> list[Path]:
+    """Return setup.bash paths to source as underlays.
+
+    Override this fixture to make pre-built packages available to both
+    the colcon build and the captured test environment.  Each path should
+    point to a ``setup.bash`` (or ``local_setup.bash``) file.
+
+    The scripts are sourced in order after the base ROS install and
+    before the test workspace's own ``local_setup.bash``, mirroring the
+    standard ROS underlay/overlay model.
+    """
+    return []
+
+
+@pytest.fixture(scope="session")
 def test_ws_env(
     test_ws_path: Path,
     test_ws_setup: None,
+    test_ws_underlays: list[Path],
     pytestconfig: pytest.Config,
 ) -> dict[str, str]:
     """Build the test workspace, source it in a clean shell, and return env."""
     workspace = Path(test_ws_path)
+    ros_setup = _resolve_ros_setup_path(pytestconfig)
 
+    # --- build the source chain: base ROS  ➜  underlays ----------------
+    source_parts: list[str] = [
+        f"source {shlex.quote(str(ros_setup))}",
+    ]
+    for underlay in test_ws_underlays:
+        source_parts.append(f"source {shlex.quote(str(underlay))}")
+
+    source_chain = " && ".join(source_parts)
+
+    # --- colcon build inside the clean-shell underlay env ---------------
+    build_script = (
+        f"{source_chain} && "
+        f"cd {shlex.quote(str(workspace))} && "
+        "colcon build --base-paths src"
+    )
     build_result = subprocess.run(
-        ["colcon", "build", "--base-paths", "src"],
-        cwd=str(workspace),
+        ["bash", "-c", build_script],
         capture_output=True,
         text=True,
+        env={},
     )
     if build_result.returncode != 0:
         pytest.fail(
@@ -74,16 +106,16 @@ def test_ws_env(
             f"--- stderr ---\n{build_result.stderr}"
         )
 
-    ros_setup = _resolve_ros_setup_path(pytestconfig)
+    # --- capture the fully-sourced environment --------------------------
     local_setup = workspace / "install" / "local_setup.bash"
-    script = (
-        f"source {shlex.quote(str(ros_setup))} && "
+    capture_script = (
+        f"{source_chain} && "
         f"source {shlex.quote(str(local_setup))} && "
         "env -0"
     )
 
     env_result = subprocess.run(
-        ["bash", "-c", script],
+        ["bash", "-c", capture_script],
         capture_output=True,
         text=True,
         env={},
@@ -91,8 +123,8 @@ def test_ws_env(
     if env_result.returncode != 0:
         pytest.fail(
             "capturing test workspace environment failed "
-            f"(exit {env_result.returncode}) after sourcing {ros_setup} "
-            f"and {local_setup}:\n"
+            f"(exit {env_result.returncode}) after sourcing "
+            f"{ros_setup} and {local_setup}:\n"
             f"--- stdout ---\n{env_result.stdout}\n"
             f"--- stderr ---\n{env_result.stderr}"
         )

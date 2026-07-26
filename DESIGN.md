@@ -201,11 +201,51 @@ def test_ws_setup(test_ws_path):
     shutil.copytree(JIG_PKG_SRC, jig_dest)
 ```
 
+#### `test_ws_underlays` (session, optional override)
+
+```python
+@pytest.fixture(scope='session')
+def test_ws_underlays() -> list[Path]:
+    """Additional setup.bash paths to source as underlays."""
+    return []
+```
+
+Returns a list of `setup.bash` (or `local_setup.bash`) paths to source
+between the base ROS install and the test workspace.  This mirrors the
+standard ROS underlay/overlay workspace model.
+
+The primary use case is making the package under test — and all of its
+transitive dependencies — available inside the isolated test
+environment without having to copy every package into `test_ws/src/`.
+
+```python
+@pytest.fixture(scope='session')
+def test_ws_underlays():
+    # The outer workspace where my_pkg and its deps are already built.
+    return [Path(__file__).parent.parent / 'install' / 'setup.bash']
+```
+
+The resulting environment stack is:
+
+```
+┌────────────────────────────────┐
+│  test_ws/install/              │  overlay  (test-jig packages)
+├────────────────────────────────┤
+│  ~/my_ws/install/              │  underlay (your package + deps)
+├────────────────────────────────┤
+│  /opt/ros/$ROS_DISTRO/         │  underlay (base ROS install)
+└────────────────────────────────┘
+```
+
+Both the `colcon build` step and the final environment capture source
+the same chain, so the build can find your package's CMake config files
+and the captured environment includes your package at runtime.
+
 #### `test_ws_env` (session)
 
 ```python
 @pytest.fixture(scope='session')
-def test_ws_env(test_ws_path, test_ws_setup) -> dict[str, str]:
+def test_ws_env(test_ws_path, test_ws_setup, test_ws_underlays) -> dict[str, str]:
     """Build the workspace at test_ws_path, source it, return the env."""
     ...
 ```
@@ -214,6 +254,12 @@ Contains the full build-and-source lifecycle described above.  The
 returned dict is a complete environment suitable for passing to
 `subprocess.run(..., env=test_ws_env)` or for inspecting
 `AMENT_PREFIX_PATH` directly.
+
+Both the build and the environment capture run inside a clean shell
+(`env={}`) that sources the base ROS install, any declared underlays
+(in order), and finally the test workspace.  This ensures the build
+finds exactly the same packages that will be visible at test time —
+no accidental outer-environment leakage in either direction.
 
 The plugin is currently incompatible with Windows.  A
 `pytest_configure` hook marks the entire plugin as unavailable on

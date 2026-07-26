@@ -88,12 +88,13 @@ The `test_ws_env` fixture runs once per session: it calls `colcon build`, source
 
 ## Fixtures
 
-The plugin provides three session-scoped fixtures:
+The plugin provides four session-scoped fixtures:
 
 | Fixture | Scope | Description |
 |---|---|---|
 | `test_ws_path` | session | **Must be overridden** by the consumer. Returns the `Path` to the test workspace directory. |
 | `test_ws_setup` | session | Optional hook for pre-build setup (e.g., copying source files into the workspace). No-op by default. |
+| `test_ws_underlays` | session | Optional list of `setup.bash` paths to source as underlays between the base ROS install and the test workspace. Empty by default. |
 | `test_ws_env` | session | Builds the workspace, sources it in a clean shell, returns `dict[str, str]` of the resulting environment. |
 
 ### Pre-build setup hook
@@ -116,6 +117,34 @@ def test_ws_setup(test_ws_path):
         shutil.rmtree(dest)
     shutil.copytree(MY_PKG_SRC, dest)
 ```
+
+### Sourcing the package under test as an underlay
+
+When testing a package that has non-trivial dependencies, copying everything into the test workspace is impractical. Instead, build your package in its own workspace and source it as an underlay:
+
+```python
+from pathlib import Path
+import pytest
+
+@pytest.fixture(scope="session")
+def test_ws_underlays():
+    # The outer workspace where my_pkg (and all its deps) is already built.
+    return [Path(__file__).parent.parent / "install" / "setup.bash"]
+```
+
+The resulting environment is layered exactly like ROS workspaces:
+
+```
+┌────────────────────────────────┐
+│  test_ws/install/              │  overlay  (test-jig packages)
+├────────────────────────────────┤
+│  ~/my_ws/install/              │  underlay (your package + deps)
+├────────────────────────────────┤
+│  /opt/ros/$ROS_DISTRO/         │  underlay (base ROS install)
+└────────────────────────────────┘
+```
+
+Both the `colcon build` step and the final environment capture source the same chain, so test-jig packages can `find_package()` your package at build time and it is available in the captured environment at test time.
 
 ### Layering additional environment variables
 
